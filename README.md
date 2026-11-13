@@ -4,7 +4,7 @@ MediGrid is an event-driven emergency healthcare coordination platform connectin
 
 ## Runtime Modes
 
-1. **AI Studio Live Preview (Node.js + Express + WebSockets + SQLite on Port 3000)**
+1. **(Node.js + Express + WebSockets + SQLite on Port 3000)**
    - Runs directly in the sandbox environment where standalone Docker, PostgreSQL, Redis, and RabbitMQ daemons are not installed.
    - Executes real relational ACID transactions (`better-sqlite3` with WAL mode, foreign keys, and partial unique indexes), in-process atomic Redis-style reservation locks (`redisCoordinator.ts`) with 15-minute TTL expiry, a durable Transactional Outbox + RabbitMQ-style priority queue / DLQ broker (`rabbitmqBroker.ts`), and 2 stateless load-balanced API nodes (`API Node Alpha` & `API Node Beta`) with WebSocket live broadcasts (`/ws`).
    - All seeded records are explicitly labeled as **synthetic demonstration data**.
