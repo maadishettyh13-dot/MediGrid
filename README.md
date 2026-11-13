@@ -68,8 +68,4 @@ npm run dev
 ```
 Open `http://localhost:3000`.
 
-### Docker Compose Reference Stack (Local Machine)
-```bash
-docker compose up --build
-```
-The Nginx load balancer exposes the FastAPI cluster on `http://localhost:8080`, and RabbitMQ Management UI runs on `http://localhost:15672`.
+
