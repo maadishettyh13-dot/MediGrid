@@ -8,14 +8,20 @@ MediGrid is an event-driven emergency healthcare coordination platform connectin
    - Runs directly in the sandbox environment where standalone Docker, PostgreSQL, Redis, and RabbitMQ daemons are not installed.
    - Executes real relational ACID transactions (`better-sqlite3` with WAL mode, foreign keys, and partial unique indexes), in-process atomic Redis-style reservation locks (`redisCoordinator.ts`) with 15-minute TTL expiry, a durable Transactional Outbox + RabbitMQ-style priority queue / DLQ broker (`rabbitmqBroker.ts`), and 2 stateless load-balanced API nodes (`API Node Alpha` & `API Node Beta`) with WebSocket live broadcasts (`/ws`).
    - All seeded records are explicitly labeled as **synthetic demonstration data**.
+   - 
+2. Backend Reference Architecture (Local Execution)
 
-2. **Full Docker Reference Stack (`docker-compose.yml` + `fastapi-reference/`)**
-   - Ready for local execution with Docker Desktop / Docker Engine:
-     - `postgres:16-alpine` (PostgreSQL 16 with `asyncpg` and partial `UNIQUE` constraints)
-     - `redis:7-alpine` (Redis Lua `SPOP` + `SET NX EX 900` atomic bed locking)
-     - `rabbitmq:3.13-management-alpine` (Durable priority queues with `x-max-priority: 10`, publisher confirms, and Dead-Letter Exchange)
-     - `medigrid-api-1` & `medigrid-api-2` (2 FastAPI replicas)
-     - `nginx:1.27-alpine` (Load balancer with automatic 5-second upstream failover)
+- Designed for local execution without Docker Desktop or Docker Engine.
+- Backend services can be installed and configured individually:
+  - **PostgreSQL 16** – Relational database for persistent storage, supporting `asyncpg` and partial `UNIQUE` constraints.
+  - **Redis 7** – In-memory data store for caching and atomic bed-locking operations using Redis Lua scripts, `SPOP`, and `SET NX EX 900`.
+  - **RabbitMQ 3.13** – Message broker supporting durable priority queues (`x-max-priority: 10`), publisher confirms, and Dead-Letter Exchange.
+  - **FastAPI** – Backend API for application logic, request handling, and database integration.
+  - **Nginx** – Reverse proxy and load balancer for distributing requests across multiple API instances, with upstream failover configuration.
+
+- Services are started and managed individually in the local development environment.
+- Multiple FastAPI instances can be configured for load balancing if required.
+- Database, caching, messaging, and API services communicate through their respective local configurations.
 
 ## Project Structure
 
