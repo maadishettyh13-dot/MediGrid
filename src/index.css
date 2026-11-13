@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    background-color: #F8F3E9;
+    color: #302B2B;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom Leaflet Cream & Maroon Popups */
+.leaflet-container {
+  background-color: #EFE8DA;
+  font-family: var(--font-sans);
+}
+
+.medilink-popup .leaflet-popup-content-wrapper {
+  background-color: #FFFEFA;
+  color: #302B2B;
+  border: 1px solid #E7DED2;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(48, 43, 43, 0.08);
+  padding: 2px;
+}
+
+.medilink-popup .leaflet-popup-tip {
+  background-color: #FFFEFA;
+  border: 1px solid #E7DED2;
+}
+
+.medilink-popup .leaflet-popup-close-button {
+  color: #77716D;
+}
+
+.medilink-popup .leaflet-popup-close-button:hover {
+  color: #702C3B;
+}
+
+/* Muted warm map tile tint for clean readability */
+.medilink-map-tiles {
+  filter: sepia(18%) saturate(75%) brightness(101%) contrast(94%);
+}

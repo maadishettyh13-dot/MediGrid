@@ -1,0 +1,8 @@
+{
+  "name": "MedGrid",
+  "description": "Emergency Bed Management & Intelligent Ambulance Coordination Platform with event-driven messaging, atomic bed reservations, and live city-wide dispatch.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

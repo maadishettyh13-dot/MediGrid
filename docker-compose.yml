@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: medigrid-postgres
+    environment:
+      POSTGRES_DB: medigrid
+      POSTGRES_USER: medigrid
+      POSTGRES_PASSWORD: medigrid_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medigrid -d medigrid"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: medigrid-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: medigrid-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: medigrid
+      RABBITMQ_DEFAULT_PASS: medigrid_dev_password
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  medigrid-api-1:
+    build: ./fastapi-reference
+    container_name: medigrid-api-1
+    environment:
+      INSTANCE_ID: medigrid-api-1
+      DATABASE_URL: postgresql://medigrid:medigrid_dev_password@postgres:5432/medigrid
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://medigrid:medigrid_dev_password@rabbitmq:5672/
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  medigrid-api-2:
+    build: ./fastapi-reference
+    container_name: medigrid-api-2
+    environment:
+      INSTANCE_ID: medigrid-api-2
+      DATABASE_URL: postgresql://medigrid:medigrid_dev_password@postgres:5432/medigrid
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://medigrid:medigrid_dev_password@rabbitmq:5672/
+    ports:
+      - "8002:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: medigrid-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./fastapi-reference/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - medigrid-api-1
+      - medigrid-api-2
+
+volumes:
+  pgdata:
